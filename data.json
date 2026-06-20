@@ -1,0 +1,37 @@
+{
+  "last_fetched": null,
+  "levels": [
+    {
+      "level_name": "GRIEF",
+      "verifier": "TBD",
+      "current_best_pct": 0,
+      "attempt_count": null,
+      "last_updated": null,
+      "milestones": []
+    },
+    {
+      "level_name": "Heliopolis",
+      "verifier": "TBD",
+      "current_best_pct": 0,
+      "attempt_count": null,
+      "last_updated": null,
+      "milestones": []
+    },
+    {
+      "level_name": "Sweeping Demon II",
+      "verifier": "TBD",
+      "current_best_pct": 0,
+      "attempt_count": null,
+      "last_updated": null,
+      "milestones": []
+    },
+    {
+      "level_name": "Society",
+      "verifier": "TBD",
+      "current_best_pct": 0,
+      "attempt_count": null,
+      "last_updated": null,
+      "milestones": []
+    }
+  ]
+}
