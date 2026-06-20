@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GD Top 1 Race Tracker</title>
+  <style>
+    :root {
+      --bg: #0d0d1a;
+      --card: #151528;
+      --border: #2a2a50;
+      --accent: #7c6fff;
+      --accent2: #ff6fb0;
+      --text: #e0e0f0;
+      --muted: #7070a0;
+      --green: #4ade80;
+      --yellow: #facc15;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    header h1 {
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.4rem;
+    }
+    header p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    #last-updated {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 0.2s;
+    }
+    .card:hover { border-color: var(--accent); }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+    .level-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .verifier {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+    .best-pct {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-align: right;
+    }
+    .progress-bar-wrap {
+      background: var(--border);
+      border-radius: 99px;
+      height: 8px;
+      margin: 1rem 0;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.6s ease;
+    }
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .milestones h3 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .milestone-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .milestone-tag {
+      background: var(--border);
+      border-radius: 6px;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text);
+    }
+    .milestone-tag.latest {
+      background: rgba(124, 111, 255, 0.25);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    .loading {
+      text-align: center;
+      padding: 4rem;
+      color: var(--muted);
+    }
+    .error-banner {
+      background: rgba(255, 80, 80, 0.15);
+      border: 1px solid #ff5050;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      max-width: 600px;
+      margin: 2rem auto;
+      font-size: 0.9rem;
+      color: #ff8080;
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>⚡ GD Top 1 Race Tracker</h1>
+    <p>Live verifier progress — GRIEF · Heliopolis · Sweeping Demon II · Society</p>
+    <div id="last-updated">Loading...</div>
+  </header>
+
+  <div id="root"><div class="loading">Fetching latest data...</div></div>
+
+  <footer>
+    Auto-updated every 6 hours via GitHub Actions &nbsp;·&nbsp;
+    Data sourced from GD Fandom Wiki &amp; GD Colon Wiki
+  </footer>
+
+  <script>
+    async function load() {
+      const root = document.getElementById('root');
+      try {
+        const res = await fetch('data.json?t=' + Date.now());
+        if (!res.ok) throw new Error('data.json not found');
+        const data = await res.json();
+
+        const lu = document.getElementById('last-updated');
+        if (data.last_fetched) {
+          lu.textContent = 'Last updated: ' + new Date(data.last_fetched).toLocaleString();
+        }
+
+        const levels = data.levels || [];
+        if (!levels.length) {
+          root.innerHTML = '<div class="error-banner">No level data yet — check back after the first scraper run.</div>';
+          return;
+        }
+
+        root.innerHTML = '<div class="grid">' + levels.map(renderCard).join('') + '</div>';
+      } catch (e) {
+        root.innerHTML = '<div class="error-banner">Could not load data.json: ' + e.message + '</div>';
+      }
+    }
+
+    function renderCard(lvl) {
+      const pct = lvl.current_best_pct ?? 0;
+      const milestones = (lvl.milestones || []).slice().sort((a, b) => b.pct - a.pct);
+      const latestMilestone = milestones[0];
+
+      const tags = milestones.slice(0, 8).map((m, i) =>
+        `<span class="milestone-tag ${i === 0 ? 'latest' : ''}" title="${m.date || ''}">${m.pct}%</span>`
+      ).join('');
+
+      const attempts = lvl.attempt_count ? `${lvl.attempt_count.toLocaleString()} attempts` : '';
+      const updated = lvl.last_updated ? new Date(lvl.last_updated).toLocaleDateString() : '';
+
+      return `
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="level-name">${escHtml(lvl.level_name)}</div>
+              <div class="verifier">🎮 ${escHtml(lvl.verifier || 'Unknown')}</div>
+            </div>
+            <div class="best-pct">${pct}%</div>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" style="width:${pct}%"></div>
+          </div>
+          <div class="meta">
+            <span>${attempts}</span>
+            <span>${updated ? 'Updated ' + updated : ''}</span>
+          </div>
+          ${milestones.length ? `
+          <div class="milestones">
+            <h3>Milestones</h3>
+            <div class="milestone-list">${tags}</div>
+          </div>` : ''}
+        </div>`;
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    load();
+  </script>
+</body>
+</html>
