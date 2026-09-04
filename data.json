@@ -1,12 +1,12 @@
 {
-  "last_fetched": "2026-09-03T20:33:40.542933+00:00",
+  "last_fetched": "2026-09-04T03:08:30.378552+00:00",
   "levels": [
     {
       "level_name": "GRIEF",
       "verifier": "TBD",
       "current_best_pct": 0,
       "attempt_count": null,
-      "last_updated": "2026-09-03T20:33:31.824821+00:00",
+      "last_updated": "2026-09-04T03:08:20.924410+00:00",
       "milestones": []
     },
     {
@@ -14,7 +14,7 @@
       "verifier": "TBD",
       "current_best_pct": 0,
       "attempt_count": null,
-      "last_updated": "2026-09-03T20:33:34.164809+00:00",
+      "last_updated": "2026-09-04T03:08:23.424856+00:00",
       "milestones": []
     },
     {
@@ -22,7 +22,7 @@
       "verifier": "TBD",
       "current_best_pct": 0,
       "attempt_count": null,
-      "last_updated": "2026-09-03T20:33:36.280702+00:00",
+      "last_updated": "2026-09-04T03:08:25.773132+00:00",
       "milestones": []
     },
     {
@@ -30,7 +30,7 @@
       "verifier": "TBD",
       "current_best_pct": 0,
       "attempt_count": null,
-      "last_updated": "2026-09-03T20:33:38.376968+00:00",
+      "last_updated": "2026-09-04T03:08:28.115377+00:00",
       "milestones": []
     }
   ]
